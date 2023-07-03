@@ -1,15 +1,16 @@
 //services import
 const {
-  getProductDetailss,
   getProduct,
+  getSearchedProduct,
+  getallProducts,
 } = require("../services/productService");
 
 const resolvers = {
   Query: {
     // to fetch all products
-    fetchProducts: async () => {
+    fetchProducts: async (parent, { query }) => {
       try {
-        const data = await getProductDetailss();
+        const data = await getSearchedProduct(query);
         return data;
       } catch (error) {
         console.log(error);
@@ -21,6 +22,16 @@ const resolvers = {
     singleProduct: async (parent, { id }) => {
       try {
         const data = await getProduct(id);
+        return data;
+      } catch (error) {
+        console.log(error);
+        throw new Error(error);
+      }
+    },
+
+    getAllProducts: async () => {
+      try {
+        const data = await getallProducts();
         return data;
       } catch (error) {
         console.log(error);
