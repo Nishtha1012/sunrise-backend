@@ -1,12 +1,18 @@
 const { gql } = require("apollo-server");
 
 const typeDefs = gql`
+  scalar JSON
+
   type Query {
     fetchProducts(query: String!): [product]
     singleProduct(id: String!): product
     getAllProducts: [product]
+    getSearchSuggesion(term: String!): [suggesion]
   }
 
+  type suggesion {
+    text: String
+  }
   type product {
     id: String
     name: Name
@@ -18,8 +24,6 @@ const typeDefs = gql`
   type Name {
     en: String
   }
-
-  scalar JSON
 
   type master {
     id: String!

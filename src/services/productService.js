@@ -68,4 +68,27 @@ const getProduct = async (id) => {
   }
 };
 
-module.exports = { getProduct, getSearchedProduct, getallProducts };
+const getSuggesion = async (term) => {
+  try {
+    const suggesion = await apiRoot
+      .productProjections()
+      .suggest()
+      .get({
+        queryArgs: {
+          [`searchKeywords.en`]: term,
+        },
+      })
+      .execute();
+    console.log(suggesion.body["searchKeywords.en"]);
+    return suggesion.body["searchKeywords.en"];
+  } catch (error) {
+    throw error;
+  }
+};
+
+module.exports = {
+  getProduct,
+  getSearchedProduct,
+  getallProducts,
+  getSuggesion,
+};

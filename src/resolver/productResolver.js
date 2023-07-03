@@ -3,6 +3,7 @@ const {
   getProduct,
   getSearchedProduct,
   getallProducts,
+  getSuggesion,
 } = require("../services/productService");
 
 const resolvers = {
@@ -36,6 +37,16 @@ const resolvers = {
       } catch (error) {
         console.log(error);
         throw new Error(error);
+      }
+    },
+
+    getSearchSuggesion: async (parent, { term }) => {
+      try {
+        const data = await getSuggesion(term);
+        return data;
+      } catch (error) {
+        console.log(error);
+        return error;
       }
     },
   },
