@@ -1,5 +1,6 @@
 const { apiRoot } = require("../ctpClient");
 
+//service for getting all products
 const getProductDetailss = async () => {
   try {
     const detail = await apiRoot.productProjections().get({}).execute();
@@ -15,10 +16,11 @@ const getProductDetailss = async () => {
 
     return productsWithId;
   } catch (error) {
-    return error;
+    throw error;
   }
 };
 
+//service for getting single product by id
 const getProduct = async (id) => {
   try {
     const prod = await apiRoot
@@ -28,7 +30,7 @@ const getProduct = async (id) => {
       .execute();
     return prod.body;
   } catch (error) {
-    return error;
+    throw error;
   }
 };
 

@@ -1,3 +1,4 @@
+//services import
 const {
   getProductDetailss,
   getProduct,
@@ -5,10 +6,10 @@ const {
 
 const resolvers = {
   Query: {
+    // to fetch all products
     fetchProducts: async () => {
       try {
         const data = await getProductDetailss();
-        console.log(data);
         return data;
       } catch (error) {
         console.log(error);
@@ -16,11 +17,10 @@ const resolvers = {
       }
     },
 
+    // to fetch one product by id
     singleProduct: async (parent, { id }) => {
       try {
-        console.log("id", id);
         const data = await getProduct(id);
-        console.log(data);
         return data;
       } catch (error) {
         console.log(error);

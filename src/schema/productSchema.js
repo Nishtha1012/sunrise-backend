@@ -5,6 +5,7 @@ const typeDefs = gql`
     fetchProducts: [product]
     singleProduct(id: String!): product
   }
+
   type product {
     id: String
     name: Name
@@ -12,10 +13,13 @@ const typeDefs = gql`
     metaDescription: Name
     masterVariant: master
   }
+
   type Name {
     en: String
   }
+
   scalar JSON
+
   type master {
     id: String!
     images: [img]
@@ -23,12 +27,15 @@ const typeDefs = gql`
     prices: [price]
     attributes: JSON
   }
+
   type img {
     url: String
   }
+
   type price {
     value: values
   }
+
   type values {
     currencyCode: String
     centAmount: Int
