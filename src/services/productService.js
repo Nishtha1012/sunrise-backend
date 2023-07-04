@@ -47,7 +47,7 @@ const getSearchedProduct = async (query) => {
         id: Math.random().toString(36).substr(2, 9), // Generate a random ID
       },
     }));
-
+    
     return productsWithId;
   } catch (error) {
     throw error;
@@ -76,6 +76,7 @@ const getSuggesion = async (term) => {
       .get({
         queryArgs: {
           [`searchKeywords.en`]: term,
+          fuzzy: true,
         },
       })
       .execute();
