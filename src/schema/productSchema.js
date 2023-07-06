@@ -10,6 +10,32 @@ const typeDefs = gql`
     getSearchSuggesion(term: String!): [suggesion]
   }
 
+  type Mutation {
+    phoneLogin(id: String!): loginResponse
+    checkExisting(email: String!, phoneNumber: String!): exists
+    signupUserCT(
+      email: String
+      password: String!
+      phoneNumber: String!
+      firstname: String!
+      lastname: String!
+    ): customer
+  }
+
+  type exists {
+    exists: String
+  }
+
+  type customer {
+    id: String
+  }
+
+  type loginResponse {
+    email: String
+    phone_number: String
+    uid: String
+  }
+
   type suggesion {
     text: String
   }

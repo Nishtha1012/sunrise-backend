@@ -4,6 +4,9 @@ const {
   getSearchedProduct,
   getallProducts,
   getSuggesion,
+  phoneNumberLogin,
+  userSignupCT,
+  checkifUserExists,
 } = require("../services/productService");
 
 const resolvers = {
@@ -43,6 +46,47 @@ const resolvers = {
     getSearchSuggesion: async (parent, { term }) => {
       try {
         const data = await getSuggesion(term);
+        return data;
+      } catch (error) {
+        console.log(error);
+        return error;
+      }
+    },
+  },
+  Mutation: {
+    checkExisting: async (parent, { email, phoneNumber }) => {
+      try {
+        const data = await checkifUserExists(email, phoneNumber);
+        console.log(data);
+        return data;
+      } catch (error) {
+        console.log(error);
+        return error;
+      }
+    },
+
+    phoneLogin: async (parent, { id }) => {
+      try {
+        const data = await phoneNumberLogin(id);
+        return data;
+      } catch (error) {
+        console.log(error);
+        return error;
+      }
+    },
+
+    signupUserCT: async (
+      parent,
+      { email, password, phoneNumber, firstname, lastname }
+    ) => {
+      try {
+        const data = await userSignupCT(
+          email,
+          password,
+          phoneNumber,
+          firstname,
+          lastname
+        );
         return data;
       } catch (error) {
         console.log(error);
