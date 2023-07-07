@@ -14,11 +14,7 @@ const typeDefs = gql`
     phoneLogin(id: String!): loginResponse
     checkExisting(email: String!, phoneNumber: String!): exists
     signupUserCT(
-      email: String
-      password: String!
-      phoneNumber: String!
-      firstname: String!
-      lastname: String!
+     token:String!
     ): customer
   }
 

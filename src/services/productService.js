@@ -100,19 +100,17 @@ const phoneNumberLogin = async (id) => {
   }
 };
 
-const userSignupCT = async (
-  email,
-  password,
-  phoneNumber,
-  firstname,
-  lastname
-) => {
+const userSignupCT = async (token) => {
+  console.log("token", token);
   try {
+    const details = await firebaseAuth.verifyIdToken(token);
+
+    console.log(details);
+
     const newCustomerDetails = {
-      firstName: firstname,
-      lastName: lastname,
-      email: email,
-      password: password,
+      firstName: details.name,
+      email: details.email,
+      password: details.email,
       custom: {
         type: {
           key: "customerPhoneNumber",
@@ -120,7 +118,7 @@ const userSignupCT = async (
         },
         fields: {
           phoneNumber: {
-            en: phoneNumber,
+            en: details.phone_number,
           },
         },
       },
@@ -128,7 +126,9 @@ const userSignupCT = async (
 
     // Post the CustomerDraft and get the new Customer
     const response = await apiRoot
-      .customers()
+
+      .me()
+      .signup()
       .post({ body: newCustomerDetails })
       .execute();
     return response.body.customer;

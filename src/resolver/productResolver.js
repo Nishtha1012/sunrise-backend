@@ -75,18 +75,9 @@ const resolvers = {
       }
     },
 
-    signupUserCT: async (
-      parent,
-      { email, password, phoneNumber, firstname, lastname }
-    ) => {
+    signupUserCT: async (parent, { token }) => {
       try {
-        const data = await userSignupCT(
-          email,
-          password,
-          phoneNumber,
-          firstname,
-          lastname
-        );
+        const data = await userSignupCT(token);
         return data;
       } catch (error) {
         console.log(error);
