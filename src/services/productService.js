@@ -1,13 +1,15 @@
 const { apiRoot } = require("../ctpClient");
 const { adminApp, firebaseAuth } = require("../firebaseConfig");
-const { getAuth } = require("firebase/auth");
+const { authClient } = require("../config");
 
-//service for getting all products
+/**
+ * Service for getting all products.
+ * @param {string} query - The query string.
+ * @returns {Promise} - Resolves to the fetched products.
+ */
 const getallProducts = async (query) => {
-  console.log("q", query);
   try {
     const detail = await apiRoot.productProjections().get({}).execute();
-
     console.log(detail);
 
     // Add a unique ID to the masterVariant object within each product
@@ -25,7 +27,11 @@ const getallProducts = async (query) => {
   }
 };
 
-//get searched products
+/**
+ * Service for getting searched products.
+ * @param {string} query - The search query.
+ * @returns {Promise} - Resolves to the searched products.
+ */
 const getSearchedProduct = async (query) => {
   console.log("q", query);
   try {
@@ -38,7 +44,6 @@ const getSearchedProduct = async (query) => {
         },
       })
       .execute();
-
     console.log(detail);
 
     // Add a unique ID to the masterVariant object within each product
@@ -56,7 +61,11 @@ const getSearchedProduct = async (query) => {
   }
 };
 
-//service for getting single product by id
+/**
+ * Service for getting a single product by ID.
+ * @param {string} id - The ID of the product.
+ * @returns {Promise} - Resolves to the fetched product.
+ */
 const getProduct = async (id) => {
   try {
     const prod = await apiRoot
@@ -70,6 +79,11 @@ const getProduct = async (id) => {
   }
 };
 
+/**
+ * Service for getting search suggestions.
+ * @param {string} term - The search term.
+ * @returns {Promise} - Resolves to the search suggestions.
+ */
 const getSuggesion = async (term) => {
   try {
     const suggesion = await apiRoot
@@ -89,24 +103,40 @@ const getSuggesion = async (term) => {
   }
 };
 
-const phoneNumberLogin = async (id) => {
+/**
+ * Service for getting a token.
+ * @param {string} id - The ID used to generate the token.
+ * @returns {Promise} - Resolves to the generated token.
+ */
+const getToken = async (id) => {
   try {
     const userResponse = await adminApp.auth().verifyIdToken(id);
-
-    return userResponse;
+    console.log(userResponse);
+    const token = await authClient.customerPasswordFlow(
+      {
+        username: userResponse.email,
+        password: userResponse.email,
+      },
+      {
+        disableRefreshToken: false,
+      }
+    );
+    console.log(token.access_token);
+    return token.access_token;
   } catch (error) {
     console.log(error);
     throw error;
   }
 };
 
+/**
+ * Service for user signup using a token.
+ * @param {string} token - The signup token.
+ * @returns {Promise} - Resolves to the user data after signup.
+ */
 const userSignupCT = async (token) => {
-  console.log("token", token);
   try {
     const details = await firebaseAuth.verifyIdToken(token);
-
-    console.log(details);
-
     const newCustomerDetails = {
       firstName: details.name,
       email: details.email,
@@ -126,7 +156,6 @@ const userSignupCT = async (token) => {
 
     // Post the CustomerDraft and get the new Customer
     const response = await apiRoot
-
       .me()
       .signup()
       .post({ body: newCustomerDetails })
@@ -138,7 +167,14 @@ const userSignupCT = async (token) => {
   }
 };
 
+/**
+ * Service for checking if a user exists.
+ * @param {string} email - The email of the user.
+ * @param {string} phoneNumber - The phone number of the user.
+ * @returns {Promise} - Resolves to an object indicating whether the user exists or not.
+ */
 const checkifUserExists = async (email, phoneNumber) => {
+  console.log(email);
   try {
     const userByMail = await firebaseAuth.getUserByEmail(email);
     if (userByMail) {
@@ -146,7 +182,6 @@ const checkifUserExists = async (email, phoneNumber) => {
       return { exists: true };
     }
   } catch (error) {
-    console.log(error);
     try {
       const userByPhone = await firebaseAuth.getUserByPhoneNumber(phoneNumber);
       if (userByPhone) {
@@ -154,10 +189,52 @@ const checkifUserExists = async (email, phoneNumber) => {
         return { exists: true };
       }
     } catch (error) {
+      console.log(error);
       if (error.code === "auth/user-not-found") {
         return { exists: false };
       }
     }
+  }
+};
+
+/**
+ * Service for user signup with social media authentication.
+ * @param {string} token - The social media signup token.
+ * @returns {Promise} - Resolves to the user data after signup.
+ */
+const userSignUpSocial = async (token) => {
+  try {
+    const details = await firebaseAuth.verifyIdToken(token);
+    console.log(details);
+    const newCustomerDetails = {
+      firstName: details.name,
+      email: details.email,
+      password: details.email,
+    };
+
+    // const result = await apiRoot
+    //   .get({
+    //     queryArgs: {
+    //       where: { email: details.email },
+    //     },
+    //   })
+    //   .execute();
+    // console.log(
+    //   "===========================================================",
+    //   result
+    // );
+
+    // Post the CustomerDraft and get the new Customer
+    const response = await apiRoot
+      .me()
+      .signup()
+      .post({ body: newCustomerDetails })
+      .execute();
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.log(error);
+    return error;
   }
 };
 
@@ -166,7 +243,8 @@ module.exports = {
   getSearchedProduct,
   getallProducts,
   getSuggesion,
-  phoneNumberLogin,
+  getToken,
   userSignupCT,
   checkifUserExists,
+  userSignUpSocial,
 };

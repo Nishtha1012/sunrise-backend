@@ -11,11 +11,10 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    phoneLogin(id: String!): loginResponse
+    getCtToken(id: String!): loginResponse
     checkExisting(email: String!, phoneNumber: String!): exists
-    signupUserCT(
-     token:String!
-    ): customer
+    signupUserCT(token: String!): customer
+    signUpWithSocials(token: String!): customer
   }
 
   type exists {

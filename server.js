@@ -1,22 +1,35 @@
-// const express = require("express");
-// const { getClient } = require("./src/config");
-// const { router } = require("./src/router/productRoute");
-
-// const app = express();
-const { ApolloServer } = require("apollo-server");
+const { ApolloServer } = require("@apollo/server");
 const { typeDefs } = require("./src/schema/productSchema");
 const { resolvers } = require("./src/resolver/productResolver");
+const { expressMiddleware } = require("@apollo/server/express4");
+const cors = require("cors");
+const express = require("express");
 
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-});
+const http = require("http");
 
-server.listen(8000).then(({ url }) => {
-  console.log(`server is running at ${url}`);
-});
-// app.use("/product", router);
+const bodyParser = require("body-parser");
 
-// app.listen(8000, () => {
-//   console.log("connected");
-// });
+(async () => {
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+  });
+
+  const app = express();
+  const httpServer = http.createServer(app);
+
+  await server.start();
+
+  app.use(
+    "/",
+    cors({ origin: "http://localhost:3000", credentials: true }),
+    bodyParser.json(),
+    expressMiddleware(server, {
+      context: async ({ req, res }) => ({ req, res }),
+    })
+  );
+
+  await new Promise((resolve) => httpServer.listen({ port: 8000 }, resolve));
+
+  console.log(`server is running `);
+})();
