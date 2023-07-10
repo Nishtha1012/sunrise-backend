@@ -4,11 +4,14 @@ const {
   getSearchedProduct,
   getallProducts,
   getSuggesion,
-  userSignupCT,
+} = require("../services/productService");
+
+const {
   checkifUserExists,
   getToken,
+  userSignupCT,
   userSignUpSocial,
-} = require("../services/productService");
+} = require("../services/userService");
 
 const resolvers = {
   Query: {
