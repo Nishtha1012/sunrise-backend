@@ -116,6 +116,7 @@ const resolvers = {
         const cookieOptions = {
           httpOnly: true,
           secure: true,
+          sameSite: "None",
         };
         res.cookie("Nishtha", data, cookieOptions);
         return data;
