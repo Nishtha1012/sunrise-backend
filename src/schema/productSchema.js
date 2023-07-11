@@ -14,7 +14,8 @@ const typeDefs = gql`
     getCtToken(id: String!): loginResponse
     checkExisting(email: String!, phoneNumber: String!): exists
     signupUserCT(token: String!): customer
-    signUpWithSocials(token: String!): customer
+    signUpWithSocials(token: String!): JSON
+    getSocialToken(id: String!): loginResponse
   }
 
   type exists {

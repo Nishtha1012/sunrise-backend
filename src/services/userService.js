@@ -20,7 +20,6 @@ const getToken = async (id) => {
         disableRefreshToken: false,
       }
     );
-    console.log(token.access_token);
     return token.access_token;
   } catch (error) {
     console.log(error);
@@ -102,38 +101,63 @@ const checkifUserExists = async (email, phoneNumber) => {
  * @returns {Promise} - Resolves to the user data after signup.
  */
 const userSignUpSocial = async (token) => {
+  const { uid } = await firebaseAuth.verifyIdToken(token);
+  const details = await firebaseAuth.getUser(uid);
   try {
-    const details = await firebaseAuth.verifyIdToken(token);
-    console.log(details);
-    const newCustomerDetails = {
-      firstName: details.name,
-      email: details.email,
-      password: details.email,
-    };
+    console.log(details, "detailss");
 
-    // const result = await apiRoot
-    //   .get({
-    //     queryArgs: {
-    //       where: { email: details.email },
-    //     },
-    //   })
-    //   .execute();
-    // console.log(
-    //   "===========================================================",
-    //   result
-    // );
+    const users = await firebaseAuth.getUserByEmail(
+      details.providerData[0].email
+    );
+    if (users.providerData.length > 1) {
+      console.log("Existsss");
+      const deleted = await firebaseAuth.deleteUser(uid);
+      return true;
+    }
+  } catch (error) {
+    if (error.code === "auth/user-not-found") {
+      const data = await firebaseAuth.updateUser(uid, {
+        email: details.providerData[0].email,
+      });
 
-    // Post the CustomerDraft and get the new Customer
-    const response = await apiRoot
-      .me()
-      .signup()
-      .post({ body: newCustomerDetails })
-      .execute();
-    console.log(response);
-    return response;
+      // Post the CustomerDraft and get the new Customer
+      const newCustomerDetails = {
+        firstName: details.providerData[0].displayName,
+        email: details.providerData[0].email,
+        password: details.providerData[0].email,
+      };
+      const response = await apiRoot
+        .me()
+        .signup()
+        .post({ body: newCustomerDetails })
+        .execute();
+      console.log(response);
+      return response;
+    }
+    console.log(error, "error");
+    return error;
+  }
+};
+
+const getTokenSocials = async (id) => {
+  console.log("here");
+  try {
+    const { uid } = await adminApp.auth().verifyIdToken(id);
+    const user = await firebaseAuth.getUser(uid);
+    console.log(user);
+    const token = await authClient.customerPasswordFlow(
+      {
+        username: user.providerData[0].email,
+        password: user.providerData[0].email,
+      },
+      {
+        disableRefreshToken: false,
+      }
+    );
+    return token.access_token;
   } catch (error) {
     console.log(error);
-    return error;
+    throw error;
   }
 };
 
@@ -142,4 +166,5 @@ module.exports = {
   userSignupCT,
   checkifUserExists,
   userSignUpSocial,
+  getTokenSocials,
 };

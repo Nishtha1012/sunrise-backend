@@ -85,6 +85,7 @@ const getProduct = async (id) => {
  * @returns {Promise} - Resolves to the search suggestions.
  */
 const getSuggesion = async (term) => {
+  console.log(term);
   try {
     const suggesion = await apiRoot
       .productProjections()
@@ -96,6 +97,7 @@ const getSuggesion = async (term) => {
         },
       })
       .execute();
+    console.log(suggesion);
     console.log(suggesion.body["searchKeywords.en"]);
     return suggesion.body["searchKeywords.en"];
   } catch (error) {
@@ -103,12 +105,9 @@ const getSuggesion = async (term) => {
   }
 };
 
-
-
 module.exports = {
   getProduct,
   getSearchedProduct,
   getallProducts,
   getSuggesion,
- 
 };

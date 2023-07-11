@@ -11,6 +11,7 @@ const {
   getToken,
   userSignupCT,
   userSignUpSocial,
+  getTokenSocials,
 } = require("../services/userService");
 
 const resolvers = {
@@ -118,7 +119,7 @@ const resolvers = {
           secure: true,
           sameSite: "None",
         };
-        res.cookie("Nishtha", data, cookieOptions);
+        res.cookie("AuthToken", data, cookieOptions);
         return data;
       } catch (error) {
         console.log(error);
@@ -150,10 +151,26 @@ const resolvers = {
      * @param {string} args.token - The token used for social media signup.
      * @returns {Promise} - Resolves to the user data after signup.
      */
-    signUpWithSocials: async (parent, { token }) => {
-      console.log(token);
+    signUpWithSocials: async (parent, { token }, { req, res }) => {
       try {
         const data = await userSignUpSocial(token);
+        return data;
+      } catch (error) {
+        console.log(error);
+        return error;
+      }
+    },
+
+    getSocialToken: async (parent, { id }, { req, res }) => {
+      console.log(id, "id");
+      try {
+        const data = await getTokenSocials(id);
+        const cookieOptions = {
+          httpOnly: true,
+          secure: true,
+          sameSite: "None",
+        };
+        res.cookie("AuthToken", data, cookieOptions);
         return data;
       } catch (error) {
         console.log(error);
