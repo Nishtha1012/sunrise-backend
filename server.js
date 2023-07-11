@@ -23,8 +23,7 @@ const bodyParser = require("body-parser");
   app.use(
     "/",
     cors({
-      // origin: "http://localhost:3000",
-      origin: "https://sunrise-frontend.vercel.app",
+      origin: ["http://localhost:3000", "https://sunrise-frontend.vercel.app"],
       credentials: true,
     }),
     bodyParser.json(),
