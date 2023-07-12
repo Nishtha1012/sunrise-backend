@@ -1,6 +1,7 @@
 const { apiRoot } = require("../ctpClient");
 const { adminApp, firebaseAuth } = require("../firebaseConfig");
 const { authClient } = require("../config");
+const { encryptPassword } = require("../utils/encrypt");
 
 /**
  * Service for getting a token.
@@ -11,10 +12,11 @@ const getToken = async (id) => {
   try {
     const userResponse = await adminApp.auth().verifyIdToken(id);
     console.log(userResponse);
+    const hasedPassword = await encryptPassword(userResponse.email);
     const token = await authClient.customerPasswordFlow(
       {
         username: userResponse.email,
-        password: userResponse.email,
+        password: hasedPassword,
       },
       {
         disableRefreshToken: false,
@@ -35,10 +37,12 @@ const getToken = async (id) => {
 const userSignupCT = async (token) => {
   try {
     const details = await firebaseAuth.verifyIdToken(token);
+    const hasedPassword = await encryptPassword(details.email);
+    console.log(hasedPassword, "password");
     const newCustomerDetails = {
       firstName: details.name,
       email: details.email,
-      password: details.email,
+      password: hasedPassword,
       custom: {
         type: {
           key: "customerPhoneNumber",
@@ -120,11 +124,15 @@ const userSignUpSocial = async (token) => {
         email: details.providerData[0].email,
       });
 
+      const hasedPassword = await encryptPassword(
+        details.providerData[0].email
+      );
+
       // Post the CustomerDraft and get the new Customer
       const newCustomerDetails = {
         firstName: details.providerData[0].displayName,
         email: details.providerData[0].email,
-        password: details.providerData[0].email,
+        password: hasedPassword,
       };
       const response = await apiRoot
         .me()
@@ -140,15 +148,14 @@ const userSignUpSocial = async (token) => {
 };
 
 const getTokenSocials = async (id) => {
-  console.log("here");
   try {
     const { uid } = await adminApp.auth().verifyIdToken(id);
     const user = await firebaseAuth.getUser(uid);
-    console.log(user);
+    const hasedPassword = await encryptPassword(user.providerData[0].email);
     const token = await authClient.customerPasswordFlow(
       {
         username: user.providerData[0].email,
-        password: user.providerData[0].email,
+        password: hasedPassword,
       },
       {
         disableRefreshToken: false,
@@ -161,10 +168,24 @@ const getTokenSocials = async (id) => {
   }
 };
 
+const tokenVerification = async (token) => {
+  try {
+    let customerDetail = await apiRoot
+      .me()
+      .get({ headers: { Authorization: `Bearer ${token}` } })
+      .execute();
+    return customerDetail;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
 module.exports = {
   getToken,
   userSignupCT,
   checkifUserExists,
   userSignUpSocial,
   getTokenSocials,
+  tokenVerification,
 };

@@ -1,6 +1,9 @@
 const { ApolloServer } = require("@apollo/server");
-const { typeDefs } = require("./src/schema/productSchema");
-const { resolvers } = require("./src/resolver/productResolver");
+const { typeDefs, productSchema } = require("./src/schema/productSchema");
+const {
+  resolvers,
+  productResolver,
+} = require("./src/resolver/productResolver");
 const { expressMiddleware } = require("@apollo/server/express4");
 const cors = require("cors");
 const express = require("express");
@@ -8,18 +11,21 @@ const express = require("express");
 const http = require("http");
 
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+const { userSchema } = require("./src/schema/userSchema");
+const { userResolver } = require("./src/resolver/userResolver");
 
 (async () => {
   const server = new ApolloServer({
-    typeDefs,
-    resolvers,
+    typeDefs: [productSchema, userSchema],
+    resolvers: [productResolver, userResolver],
   });
 
   const app = express();
   const httpServer = http.createServer(app);
 
   await server.start();
-
+  app.use(cookieParser());
   app.use(
     "/",
     cors({

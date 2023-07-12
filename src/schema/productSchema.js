@@ -1,6 +1,6 @@
 const { gql } = require("apollo-server");
 
-const typeDefs = gql`
+const productSchema = gql`
   scalar JSON
 
   type Query {
@@ -8,28 +8,6 @@ const typeDefs = gql`
     singleProduct(id: String!): product
     getAllProducts: [product]
     getSearchSuggesion(term: String!): [suggesion]
-  }
-
-  type Mutation {
-    getCtToken(id: String!): loginResponse
-    checkExisting(email: String!, phoneNumber: String!): exists
-    signupUserCT(token: String!): customer
-    signUpWithSocials(token: String!): JSON
-    getSocialToken(id: String!): loginResponse
-  }
-
-  type exists {
-    exists: String
-  }
-
-  type customer {
-    id: String
-  }
-
-  type loginResponse {
-    email: String
-    phone_number: String
-    uid: String
   }
 
   type suggesion {
@@ -69,4 +47,4 @@ const typeDefs = gql`
   }
 `;
 
-module.exports = { typeDefs };
+module.exports = { productSchema };
