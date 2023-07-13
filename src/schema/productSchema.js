@@ -1,6 +1,4 @@
-const { gql } = require("apollo-server");
-
-const productSchema = gql`
+const productSchema = `#graphql
   scalar JSON
 
   type Query {

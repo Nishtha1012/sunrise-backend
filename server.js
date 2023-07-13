@@ -14,11 +14,13 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const { userSchema } = require("./src/schema/userSchema");
 const { userResolver } = require("./src/resolver/userResolver");
+const { cartSchema } = require("./src/schema/cartSchema");
+const { cartResolver } = require("./src/resolver/cartResolver");
 
 (async () => {
   const server = new ApolloServer({
-    typeDefs: [productSchema, userSchema],
-    resolvers: [productResolver, userResolver],
+    typeDefs: [productSchema, userSchema, cartSchema],
+    resolvers: [productResolver, userResolver, cartResolver],
   });
 
   const app = express();
@@ -39,6 +41,5 @@ const { userResolver } = require("./src/resolver/userResolver");
   );
 
   await new Promise((resolve) => httpServer.listen({ port: 8000 }, resolve));
-
   console.log(`server is running `);
 })();

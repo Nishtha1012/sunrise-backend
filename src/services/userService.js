@@ -109,10 +109,10 @@ const userSignUpSocial = async (token) => {
   const details = await firebaseAuth.getUser(uid);
   try {
     console.log(details, "detailss");
-
     const users = await firebaseAuth.getUserByEmail(
       details.providerData[0].email
     );
+
     if (users.providerData.length > 1) {
       console.log("Existsss");
       const deleted = await firebaseAuth.deleteUser(uid);

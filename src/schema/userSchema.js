@@ -1,10 +1,11 @@
-const { gql } = require("apollo-server");
+// const { gql } = require("apollo-server");
 
-const userSchema = gql`
+const userSchema = `#graphql
   scalar JSON
 
   type Query {
     verifyToken: JSON
+    getAnonumousToken:JSON
   }
 
   type Mutation {

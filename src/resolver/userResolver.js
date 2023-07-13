@@ -23,6 +23,8 @@ const userResolver = {
         return error;
       }
     },
+
+    getAnonumousToken: async () => {},
   },
   Mutation: {
     /**
