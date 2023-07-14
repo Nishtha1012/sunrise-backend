@@ -1,6 +1,13 @@
 // Services import
 
-const { createCart, getCart, addToCart } = require("../services/cartServices");
+const {
+  createCart,
+  getCart,
+  addToCart,
+  removeCartProduct,
+  addEmail,
+  addShipping,
+} = require("../services/cartServices");
 
 const cartResolver = {
   Query: {
@@ -44,6 +51,62 @@ const cartResolver = {
           cartInput.cartId,
           cartInput.cartVersion,
           cartInput.productId
+        );
+        console.log(result);
+        return result;
+      } catch (error) {
+        console.log(error);
+        return error;
+      }
+    },
+
+    removeFromCart: async (parent, { cartInput }) => {
+      console.log(cartInput, "=============================");
+      try {
+        const result = await removeCartProduct(
+          cartInput.cartId,
+          cartInput.cartVersion,
+          cartInput.productId
+        );
+        console.log(result);
+        return result;
+      } catch (error) {
+        console.log(error);
+        return error;
+      }
+    },
+
+    addCustomerEmail: async (parent, { input }) => {
+      try {
+        const result = await addEmail(
+          input.cartId,
+          input.cartVersion,
+          input.email
+        );
+        console.log(result);
+        return result;
+      } catch (error) {
+        console.log(error);
+        return error;
+      }
+    },
+
+    addShippingAddress: async (parent, { shippingInput }) => {
+      console.log(
+        shippingInput,
+        "================================================="
+      );
+      try {
+        const result = await addShipping(
+          shippingInput.cartId,
+          shippingInput.cartVersion,
+          shippingInput.firstName,
+          shippingInput.lastName,
+          shippingInput.streetName,
+          shippingInput.country,
+          shippingInput.city,
+          shippingInput.postalCode,
+          shippingInput.phone
         );
         console.log(result);
         return result;

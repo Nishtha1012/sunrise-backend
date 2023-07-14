@@ -8,11 +8,37 @@ const cartSchema = `#graphql
   type Mutation{
     createGeneralCart(cartId:String): cartData
     addProductToCart(cartInput:cartInput):JSON
+    removeFromCart(cartInput:cartInput):JSON
+    addCustomerEmail(input:cartEmailInput):JSON
+    addShippingAddress(shippingInput:shippingAddress):JSON
   }
+
+  input shippingAddress{
+    cartId:String 
+    cartVersion:String 
+    fitstName:String
+    lastName:String
+    streetName:String
+    country:String
+    city:String
+    postalCode:String
+    phone:String
+  }
+
+  input cartEmailInput{
+    cartId:String 
+    cartVersion:String 
+    email:String
+  }
+
   input cartInput{
     cartId:String 
     cartVersion:String 
     productId:String
+    }
+
+  type remove{
+    deleted:String
     }
 
   type cartData{
