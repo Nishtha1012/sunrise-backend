@@ -7,6 +7,10 @@ const {
   removeCartProduct,
   addEmail,
   addShipping,
+  addBilling,
+  addShipMethod,
+  generateOrder,
+  fetchOrderByEmail,
 } = require("../services/cartServices");
 
 const cartResolver = {
@@ -25,14 +29,24 @@ const cartResolver = {
         throw new Error(error);
       }
     },
+
+    fetchOrders: async (poaernt, { Email }) => {
+      try {
+        const result = await fetchOrderByEmail(Email);
+        console.log(result);
+        return result;
+      } catch (error) {
+        console.log(error);
+        return error;
+      }
+    },
   },
   Mutation: {
     createGeneralCart: async (parent, { cartId }) => {
-      console.log(cartId);
       if (cartId === null) {
         console.log("here");
         try {
-          const result = await createCart(cartId);
+          const result = await createCart();
           console.log(result);
           return result.body;
         } catch (error) {
@@ -107,6 +121,58 @@ const cartResolver = {
           shippingInput.city,
           shippingInput.postalCode,
           shippingInput.phone
+        );
+        console.log(result);
+        return result;
+      } catch (error) {
+        console.log(error);
+        return error;
+      }
+    },
+
+    addBillingAddress: async (parent, { billingInput }) => {
+      console.log(billingInput, "/////////////////");
+      try {
+        const result = await addBilling(
+          billingInput.cartId,
+          billingInput.cartVersion,
+          billingInput.firstName,
+          billingInput.lastName,
+          billingInput.streetName,
+          billingInput.country,
+          billingInput.city,
+          billingInput.postalCode,
+          billingInput.phone
+        );
+        console.log(result);
+        return result;
+      } catch (error) {
+        console.log(error);
+        return error;
+      }
+    },
+
+    addShippingMethod: async (parent, { shippingMethodInput }) => {
+      try {
+        const result = await addShipMethod(
+          shippingMethodInput.methodId,
+          shippingMethodInput.cartId,
+          shippingMethodInput.cartVersion
+        );
+        console.log(result);
+        return result;
+      } catch (error) {
+        console.log(error);
+        return error;
+      }
+    },
+
+    createOrder: async (parent, { orderInput }) => {
+      console.log(orderInput);
+      try {
+        const result = await generateOrder(
+          orderInput.cartId,
+          orderInput.cartVersion
         );
         console.log(result);
         return result;

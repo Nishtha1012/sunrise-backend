@@ -12,8 +12,7 @@ const getCart = async (cartId) => {
   }
 };
 
-const createCart = async (cartId) => {
-  console.log(cartId, "cartID------------------------");
+const createCart = async () => {
   try {
     const result = await apiRoot
       .carts()
@@ -133,7 +132,6 @@ const addShipping = async (
             {
               action: "setShippingAddress",
               address: {
-                key: "address1",
                 firstName,
                 lastName,
                 streetName,
@@ -155,6 +153,117 @@ const addShipping = async (
   }
 };
 
+const addBilling = async (
+  cartId,
+  cartVersion,
+  firstName,
+  lastName,
+  streetName,
+  country,
+  city,
+  postalCode,
+  phone
+) => {
+  try {
+    console.log(firstName, "------------------------------------");
+    const result = await apiRoot
+      .carts()
+      .withId({ ID: cartId })
+      .post({
+        body: {
+          version: parseInt(cartVersion),
+          actions: [
+            {
+              action: "setBillingAddress",
+              address: {
+                firstName,
+                lastName,
+                streetName,
+                country: "DE",
+                city,
+                postalCode,
+                phone,
+              },
+            },
+          ],
+        },
+      })
+      .execute();
+    console.log(result);
+    return result;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
+const addShipMethod = async (methodId, cartId, cartVersion) => {
+  try {
+    const result = await apiRoot
+      .carts()
+      .withId({ ID: cartId })
+      .post({
+        body: {
+          version: parseInt(cartVersion),
+          actions: [
+            {
+              action: "setShippingMethod",
+              shippingMethod: {
+                id: methodId,
+                typeId: "shipping-method",
+              },
+            },
+          ],
+        },
+      })
+      .execute();
+    console.log(result);
+    return result;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
+const generateOrder = async (cartId, cartVersion) => {
+  try {
+    const result = await apiRoot
+      .orders()
+      .post({
+        body: {
+          cart: {
+            id: cartId,
+          },
+          version: parseInt(cartVersion),
+        },
+      })
+      .execute();
+
+    console.log(result);
+    return result;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
+const fetchOrderByEmail = async (email) => {
+  try {
+    const result = await apiRoot
+      .orders()
+      .get({
+        queryArgs: {
+          where: `customerEmail="${email}"`,
+        },
+      })
+      .execute();
+    console.log(result);
+    return result;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
 module.exports = {
   createCart,
   addToCart,
@@ -162,4 +271,8 @@ module.exports = {
   removeCartProduct,
   addEmail,
   addShipping,
+  addBilling,
+  addShipMethod,
+  generateOrder,
+  fetchOrderByEmail,
 };

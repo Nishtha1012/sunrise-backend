@@ -3,6 +3,7 @@ const cartSchema = `#graphql
 
   type Query {
     getCartProducts(cartId:String): cartItems
+    fetchOrders(Email:String):JSON
   }
 
   type Mutation{
@@ -11,12 +12,27 @@ const cartSchema = `#graphql
     removeFromCart(cartInput:cartInput):JSON
     addCustomerEmail(input:cartEmailInput):JSON
     addShippingAddress(shippingInput:shippingAddress):JSON
+    addBillingAddress(billingInput:shippingAddress):JSON
+    addShippingMethod(shippingMethodInput:shippingMethod):JSON
+    createOrder(orderInput:orderInput):JSON
+  }
+
+  input orderInput{
+    cartId:String,
+    cartVersion:String,
+  }
+
+  input shippingMethod
+  {
+    methodId : String,
+    cartId:String,
+    cartVersion:String
   }
 
   input shippingAddress{
     cartId:String 
     cartVersion:String 
-    fitstName:String
+    firstName:String
     lastName:String
     streetName:String
     country:String
@@ -42,23 +58,36 @@ const cartSchema = `#graphql
     }
 
   type cartData{
-  id:String
-  exists:String
+    id:String
+    exists:String
   }
   
   type cartItems {
     id: String
     version: Int
     lineItems: [lineItem]
+    totalPrice:total
+    taxedPrice:taxprice
   }
 
-type lineItem{
-id:String
-name:Name
-quantity:Int
-price:price
-variant:variant
+type taxprice{
+totalGross:total
+totalTax:total
+totalNet:total
+
 }
+  type total{
+    centAmount:String
+  }
+
+  type lineItem{
+    id:String
+    name:Name
+    quantity:Int
+    price:price
+    variant:variant
+  }
+
   type Name {
     en: String
   }
