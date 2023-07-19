@@ -12,6 +12,7 @@ const {
   generateOrder,
   fetchOrderByEmail,
 } = require("../services/cartServices");
+const { tokenVerification } = require("../services/userService");
 
 const cartResolver = {
   Query: {
@@ -30,10 +31,16 @@ const cartResolver = {
       }
     },
 
-    fetchOrders: async (poaernt, { Email }) => {
+    fetchOrders: async (paernt, args, { req, res }) => {
       try {
-        const result = await fetchOrderByEmail(Email);
-        console.log(result);
+        let cookie = req.cookies.AuthToken;
+        let customerDetail = await tokenVerification(cookie);
+
+        let email = customerDetail?.body?.email;
+        let customerId = customerDetail?.body?.id;
+
+        const result = await fetchOrderByEmail(email, customerId);
+        console.log(result, "///////////////////////");
         return result;
       } catch (error) {
         console.log(error);

@@ -78,7 +78,7 @@ const removeCartProduct = async (cartId, cartVersion, productId) => {
       })
       .execute();
     console.log(result);
-    return result;
+    return result.body;
   } catch (error) {
     console.log(error);
     return { deleted: false };
@@ -238,7 +238,6 @@ const generateOrder = async (cartId, cartVersion) => {
         },
       })
       .execute();
-
     console.log(result);
     return result;
   } catch (error) {
@@ -247,9 +246,9 @@ const generateOrder = async (cartId, cartVersion) => {
   }
 };
 
-const fetchOrderByEmail = async (email) => {
+const fetchOrderByEmail = async (email, customerId) => {
   try {
-    const result = await apiRoot
+    const { body } = await apiRoot
       .orders()
       .get({
         queryArgs: {
@@ -257,8 +256,40 @@ const fetchOrderByEmail = async (email) => {
         },
       })
       .execute();
-    console.log(result);
-    return result;
+
+    const orders = await addCustomerIdToOrder(body.results, customerId);
+    console.log(orders, "---------------------------------------------");
+    return orders;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
+const addCustomerIdToOrder = async (orderList, customerId) => {
+  try {
+    const orders = await Promise.all(
+      orderList.map(async (order) => {
+        const addEmail = await apiRoot
+          .orders()
+          .withId({ ID: order.id })
+          .post({
+            body: {
+              version: parseInt(order.version),
+              actions: [
+                {
+                  action: "setCustomerId",
+                  customerId,
+                },
+              ],
+            },
+          })
+          .execute();
+        console.log(addEmail, "addemail");
+        return addEmail;
+      })
+    );
+    return orders;
   } catch (error) {
     console.log(error);
     return error;

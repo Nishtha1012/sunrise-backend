@@ -3,18 +3,44 @@ const cartSchema = `#graphql
 
   type Query {
     getCartProducts(cartId:String): cartItems
-    fetchOrders(Email:String):JSON
+    fetchOrders:[orders]
   }
 
   type Mutation{
     createGeneralCart(cartId:String): cartData
-    addProductToCart(cartInput:cartInput):JSON
-    removeFromCart(cartInput:cartInput):JSON
+    addProductToCart(cartInput:cartInput):cartItems
+    removeFromCart(cartInput:cartInput):cartItems
     addCustomerEmail(input:cartEmailInput):JSON
     addShippingAddress(shippingInput:shippingAddress):JSON
     addBillingAddress(billingInput:shippingAddress):JSON
     addShippingMethod(shippingMethodInput:shippingMethod):JSON
     createOrder(orderInput:orderInput):JSON
+  }
+
+  type orders{
+    body:order
+  }
+
+  type order{
+    cart:cart
+    createdAt:String
+    lineItems:[lineItem]  
+    orderState:String
+    version:String
+    totalPrice:values
+ 
+  }
+  type Shipping{
+    firstName:String
+    lastName:String
+    streetName:String
+    postalCode:String
+    city:String
+    phone:String
+  }
+
+  type cart{
+    id:String
   }
 
   input orderInput{
@@ -68,14 +94,22 @@ const cartSchema = `#graphql
     lineItems: [lineItem]
     totalPrice:total
     taxedPrice:taxprice
+    shippingAddress:Shipping
+    customerEmail:String
+    billingAddress:Shipping
+    shippingInfo:shipInfo
   }
 
-type taxprice{
-totalGross:total
-totalTax:total
-totalNet:total
+  type shipInfo{
+    shippingMethodName:String
+  }
 
-}
+  type taxprice{
+    totalGross:total
+    totalTax:total
+    totalNet:total
+  }
+
   type total{
     centAmount:String
   }

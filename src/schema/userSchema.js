@@ -5,7 +5,6 @@ const userSchema = `#graphql
 
   type Query {
     verifyToken: JSON
-    getAnonumousToken:JSON
   }
 
   type Mutation {
