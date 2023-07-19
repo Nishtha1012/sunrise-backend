@@ -1,4 +1,7 @@
 const { apiRoot } = require("../ctpClient");
+const { transporter } = require("../utils/nodeMailer");
+const crypto = require("crypto");
+const { createClient } = require("redis");
 
 const getCart = async (cartId) => {
   console.log(cartId, "cartID===================================");
@@ -295,6 +298,36 @@ const addCustomerIdToOrder = async (orderList, customerId) => {
     return error;
   }
 };
+
+const md5sum = crypto.createHash("md5");
+
+const sendVerifactionEmail = async (email) => {
+  try {
+    const key = md5sum.update(email).digest("hex");
+    await client.set("key", key);
+    const mailOptions = {
+      from: "mernhub@gmail.com",
+      to: email,
+      subject: "Sending Email using Node.js",
+      html: `Please click here to verify your email <a href=http://localhost:3000/checkout?key=${key}>Verify here</a>`,
+    };
+
+    const value = await client.get("key");
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+        return error;
+      } else {
+        console.log(value, "value==============================");
+        console.log("Email sent: " + info.response);
+        return true;
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
 module.exports = {
   createCart,
   addToCart,
@@ -306,4 +339,5 @@ module.exports = {
   addShipMethod,
   generateOrder,
   fetchOrderByEmail,
+  sendVerifactionEmail,
 };

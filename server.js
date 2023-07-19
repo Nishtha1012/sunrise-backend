@@ -7,6 +7,7 @@ const {
 const { expressMiddleware } = require("@apollo/server/express4");
 const cors = require("cors");
 const express = require("express");
+const { createClient } = require("redis");
 
 const http = require("http");
 
@@ -39,6 +40,13 @@ const { cartResolver } = require("./src/resolver/cartResolver");
       context: async ({ req, res }) => ({ req, res }),
     })
   );
+
+  const client = createClient();
+  // await client.connect();
+  client.on("error", (err) => console.log("Redis Client Error", err));
+  client.on("connect", function () {
+    console.log("Connection Successful!!");
+  });
 
   await new Promise((resolve) => httpServer.listen({ port: 8000 }, resolve));
   console.log(`server is running `);

@@ -4,6 +4,7 @@ const cartSchema = `#graphql
   type Query {
     getCartProducts(cartId:String): cartItems
     fetchOrders:[orders]
+    verfyEmailAtCheckOut(email:String):JSON
   }
 
   type Mutation{

@@ -11,6 +11,7 @@ const {
   addShipMethod,
   generateOrder,
   fetchOrderByEmail,
+  sendVerifactionEmail,
 } = require("../services/cartServices");
 const { tokenVerification } = require("../services/userService");
 
@@ -41,6 +42,17 @@ const cartResolver = {
 
         const result = await fetchOrderByEmail(email, customerId);
         console.log(result, "///////////////////////");
+        return result;
+      } catch (error) {
+        console.log(error);
+        return error;
+      }
+    },
+
+    verfyEmailAtCheckOut: async (parent, { email }) => {
+      try {
+        const result = await sendVerifactionEmail(email);
+        console.log(result);
         return result;
       } catch (error) {
         console.log(error);
